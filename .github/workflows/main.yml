@@ -19,20 +19,38 @@ jobs:
       run: docker run -d -p 3000:3000 --name todo-app react-todo-app
       
     - name: Wait for app to start
-      run: sleep 5
+      run: sleep 10
+      
+    - name: Check container logs
+      run: docker logs todo-app
+      
+    - name: Check if app is responding
+      run: |
+        for i in {1..30}; do
+          if curl -s http://localhost:3000/ > /dev/null; then
+            echo "App is responding"
+            break
+          fi
+          echo "Waiting for app to start... ($i/30)"
+          sleep 2
+        done
       
     - name: Test API endpoints
       run: |
+        # Test root endpoint first
+        echo "Testing root endpoint..."
+        curl -f http://localhost:3000/
+        
         # Test get all todos
+        echo "Testing GET /api/todos..."
         curl -f http://localhost:3000/api/todos
         
         # Test create todo
+        echo "Testing POST /api/todos..."
         curl -f -X POST http://localhost:3000/api/todos \
           -H "Content-Type: application/json" \
           -d '{"task": "Test from CI/CD"}'
-        
-        # Test frontend loads
-        curl -f http://localhost:3000/
       
     - name: Stop container
-      run: docker stop todo-app
+      if: always()
+      run: docker stop todo-app || true
