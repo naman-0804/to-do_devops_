@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App with React</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .add-todo {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .todo-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .todo-input:focus {
+            border-color: #667eea;
+        }
+        
+        .add-btn {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .filters {
+            padding: 20px 30px;
+            display: flex;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .todo-list {
+            padding: 20px 30px 30px;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .todo-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        .todo-checkbox {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .todo-date {
+            font-size: 12px;
+            color: #666;
+            margin-right: 15px;
+        }
+        
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- React CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function TodoApp() {
+            const [todos, setTodos] = useState([
+                { id: 1, text: "Learn Docker", completed: false, createdAt: new Date().toLocaleDateString() },
+                { id: 2, text: "Set up CI/CD", completed: false, createdAt: new Date().toLocaleDateString() },
+                { id: 3, text: "Deploy to production", completed: true, createdAt: new Date().toLocaleDateString() }
+            ]);
+            const [inputValue, setInputValue] = useState('');
+            const [filter, setFilter] = useState('all');
+
+            const addTodo = () => {
+                if (inputValue.trim() !== '') {
+                    const newTodo = {
+                        id: Date.now(),
+                        text: inputValue.trim(),
+                        completed: false,
+                        createdAt: new Date().toLocaleDateString()
+                    };
+                    setTodos([...todos, newTodo]);
+                    setInputValue('');
+                }
+            };
+
+            const toggleTodo = (id) => {
+                setTodos(todos.map(todo =>
+                    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+                ));
+            };
+
+            const deleteTodo = (id) => {
+                setTodos(todos.filter(todo => todo.id !== id));
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    addTodo();
+                }
+            };
+
+            const filteredTodos = todos.filter(todo => {
+                if (filter === 'completed') return todo.completed;
+                if (filter === 'pending') return !todo.completed;
+                return true;
+            });
+
+            const stats = {
+                total: todos.length,
+                completed: todos.filter(t => t.completed).length,
+                pending: todos.filter(t => !t.completed).length
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>📝 Todo Dashboard</h1>
+                        <div className="stats">
+                            <div className="stat">
+                                <div className="stat-number">{stats.total}</div>
+                                <div>Total</div>
+                            </div>
+                            <div className="stat">
+                                <div className="stat-number">{stats.completed}</div>
+                                <div>Completed</div>
+                            </div>
+                            <div className="stat">
+                                <div className="stat-number">{stats.pending}</div>
+                                <div>Pending</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="add-todo">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="todo-input"
+                                placeholder="Enter a new task..."
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                            />
+                            <button className="add-btn" onClick={addTodo}>
+                                Add Task
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="filters">
+                        <button 
+                            className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+                            onClick={() => setFilter('all')}
+                        >
+                            All ({stats.total})
+                        </button>
+                        <button 
+                            className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
+                            onClick={() => setFilter('pending')}
+                        >
+                            Pending ({stats.pending})
+                        </button>
+                        <button 
+                            className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
+                            onClick={() => setFilter('completed')}
+                        >
+                            Completed ({stats.completed})
+                        </button>
+                    </div>
+
+                    <div className="todo-list">
+                        {filteredTodos.length === 0 ? (
+                            <div className="empty-state">
+                                <h3>No tasks found</h3>
+                                <p>Add a new task to get started!</p>
+                            </div>
+                        ) : (
+                            filteredTodos.map(todo => (
+                                <div key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+                                    <input
+                                        type="checkbox"
+                                        className="todo-checkbox"
+                                        checked={todo.completed}
+                                        onChange={() => toggleTodo(todo.id)}
+                                    />
+                                    <span className="todo-text">{todo.text}</span>
+                                    <span className="todo-date">{todo.createdAt}</span>
+                                    <button 
+                                        className="delete-btn"
+                                        onClick={() => deleteTodo(todo.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<TodoApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
