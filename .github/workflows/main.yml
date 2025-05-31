@@ -1,4 +1,4 @@
-name: Todo API CI/CD
+name: React Todo CI/CD
 
 on:
   push:
@@ -13,26 +13,26 @@ jobs:
       uses: actions/checkout@v3
       
     - name: Build Docker image
-      run: docker build -t todo-api .
+      run: docker build -t react-todo-app .
       
     - name: Run container
-      run: docker run -d -p 3000:3000 --name todo-app todo-api
+      run: docker run -d -p 3000:3000 --name todo-app react-todo-app
       
     - name: Wait for app to start
       run: sleep 5
       
     - name: Test API endpoints
       run: |
-        # Test root endpoint
-        curl -f http://localhost:3000/
-        
         # Test get all todos
-        curl -f http://localhost:3000/todos
+        curl -f http://localhost:3000/api/todos
         
         # Test create todo
-        curl -f -X POST http://localhost:3000/todos \
+        curl -f -X POST http://localhost:3000/api/todos \
           -H "Content-Type: application/json" \
           -d '{"task": "Test from CI/CD"}'
+        
+        # Test frontend loads
+        curl -f http://localhost:3000/
       
     - name: Stop container
       run: docker stop todo-app
