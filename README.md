@@ -6,26 +6,26 @@ This is a simple Todo application backend built with Node.js, showcasing modern 
 
 ## 🚀 CI/CD with GitHub Actions
 
-This project uses **GitHub Actions** to automatically run tests and build your application in a Docker container every time you push to the `main` branch.
+This project uses **GitHub Actions** to automatically run tests and build my application in a Docker container every time I push to the `main` branch.
 
 ### 🔁 Workflow Summary
 
 1. **Code is pushed to `main`**
 2. GitHub Actions:
-   - Checks out your code
-   - Builds a Docker image from your code
+   - Checks out my code
+   - Builds a Docker image from my code
    - Starts a container from the image
    - Waits for the app to respond
    - Sends test requests to API endpoints using `curl`
    - Stops the container after testing
 
-> ✅ This ensures your code is always **validated** and **container-ready**, reducing human error and improving reliability.
+> ✅ This ensures my code is always **validated** and **container-ready**, reducing human error and improving reliability.
 
 ---
 
 ## 🐳 Dockerized Application
 
-Your application is packaged using a custom `Dockerfile`:
+My application is packaged using a custom `Dockerfile`:
 
 ```Dockerfile
 FROM node:16-alpine
@@ -34,7 +34,8 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3000
-CMD ["npm", "start"] ```
+CMD ["npm", "start"]
+
 
 This Dockerfile:
 
@@ -44,7 +45,7 @@ Installs dependencies
 
 Runs the app on port 3000
 
-This makes your app portable and easy to deploy in any Docker-compatible environment.
+This makes my app portable and easy to deploy in any Docker-compatible environment.
 
 📦 Features
 RESTful API for managing todos
@@ -82,11 +83,10 @@ App will be live on http://localhost:3000
 
 docker build -t todo-api .
 docker run -p 3000:3000 todo-api
-
 ✅ GitHub Actions Workflow Explained
 Here’s what happens in .github/workflows/main.yml:
 
-docker build → Builds the app image
+docker build → Builds my app image
 
 docker run → Starts a container in the background
 
@@ -100,7 +100,7 @@ POST /api/todos
 
 docker stop → Stops the container after validation
 
-This is a simple but effective CI pipeline that checks your app before deployment.
+This is a simple but effective CI pipeline that checks my app before deployment.
 
 📁 Project Structure
 
