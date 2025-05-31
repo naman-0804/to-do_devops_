@@ -64,7 +64,7 @@ const server = http.createServer((req, res) => {
     
     // Serve React frontend
     if (pathname === '/' || pathname === '/index.html') {
-      const filePath = path.join(__dirname, 'public', 'index.html');
+      const filePath = path.join(__dirname, 'Public', 'index.html');
       fs.readFile(filePath, (err, content) => {
         if (err) {
           console.error('Error reading index.html:', err);
