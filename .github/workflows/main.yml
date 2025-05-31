@@ -21,7 +21,7 @@ jobs:
     - name: Wait for app to start
       run: |
         for i in {1..30}; do
-          if curl -s http://localhost:3000/ > /dev/null; then
+          if curl -s http://localhost:3000 > /dev/null; then
             echo "App is responding"
             exit 0
           fi
@@ -37,7 +37,7 @@ jobs:
     - name: Test API endpoints
       run: |
         echo "Testing root endpoint..."
-        curl -f http://localhost:3000/ || (echo "Root endpoint test failed" && exit 1)
+        curl -f http://localhost:3000 || (echo "Root endpoint test failed" && exit 1)
         
         echo "Testing GET /api/todos..."
         curl -f http://localhost:3000/api/todos || (echo "GET todos failed" && exit 1)
