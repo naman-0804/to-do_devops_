@@ -1,29 +1,109 @@
-# Todo API - DevOps Showcase
+# 📝 Todo API - DevOps Showcase
 
-🚀 CI/CD & Docker Deployment
-This project includes a basic CI/CD pipeline configured using GitHub Actions. Every time code is pushed to the repository, the workflow automatically performs the following steps:
+This is a simple Todo application backend built with Node.js, showcasing modern DevOps practices using **Docker** and **GitHub Actions** for continuous integration and testing.
 
-Runs tests against the Node.js HTTP server to ensure the API endpoints are functioning correctly.
+---
 
-Builds a Docker image using a Dockerfile, which sets up a lightweight Node.js environment, installs dependencies, and starts the server.
+## 🚀 CI/CD with GitHub Actions
 
-The app is then ready to be deployed in a containerized environment, exposing it on port 3000 for use.
+This project uses **GitHub Actions** to automatically run tests and build your application in a Docker container every time you push to the `main` branch.
 
-This setup ensures that the code is always verified and packaged in a consistent environment, reducing deployment errors and making the app portable across different machines and servers.
+### 🔁 Workflow Summary
 
+1. **Code is pushed to `main`**
+2. GitHub Actions:
+   - Checks out your code
+   - Builds a Docker image from your code
+   - Starts a container from the image
+   - Waits for the app to respond
+   - Sends test requests to API endpoints using `curl`
+   - Stops the container after testing
 
-## Features
-- Create, read, update, and delete todos
-- RESTful API design
-- Dockerized application
-- Automated CI/CD pipeline
+> ✅ This ensures your code is always **validated** and **container-ready**, reducing human error and improving reliability.
 
-## API Endpoints
-- `GET /` - API information
-- `GET /todos` - Get all todos
-- `GET /todos/:id` - Get specific todo
-- `POST /todos` - Create new todo
-- `PUT /todos/:id` - Update todo
-- `DELETE /todos/:id` - Delete todo
+---
 
-## Running Locally
+## 🐳 Dockerized Application
+
+Your application is packaged using a custom `Dockerfile`:
+
+```Dockerfile
+FROM node:16-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+This Dockerfile:
+
+Uses a lightweight Node.js image
+
+Installs dependencies
+
+Runs the app on port 3000
+
+This makes your app portable and easy to deploy in any Docker-compatible environment.
+
+📦 Features
+RESTful API for managing todos
+
+Create, Read, Update, Delete (CRUD) operations
+
+Dockerized build with Node.js
+
+Automated CI/CD pipeline with GitHub Actions
+
+Health check & endpoint validation during build
+
+🔌 API Endpoints
+Method	Endpoint	Description
+GET	/	Serves the frontend or root
+GET	/api/todos	Fetch all todos
+POST	/api/todos	Create a new todo
+PUT	/api/todos/:id	Update a todo by ID
+DELETE	/api/todos/:id	Delete a todo by ID
+GET	/health	Health check endpoint
+
+💻 Running Locally
+🧪 Prerequisites
+Node.js
+
+Docker (optional but recommended)
+
+🔧 Run with Node
+
+npm install
+npm start
+App will be live on http://localhost:3000
+
+🐳 Run with Docker
+
+docker build -t todo-api .
+docker run -p 3000:3000 todo-api
+
+✅ GitHub Actions Workflow Explained
+Here’s what happens in .github/workflows/main.yml:
+
+docker build → Builds the app image
+
+docker run → Starts a container in the background
+
+curl tests:
+
+GET /
+
+GET /api/todos
+
+POST /api/todos
+
+docker stop → Stops the container after validation
+
+This is a simple but effective CI pipeline that checks your app before deployment.
+
+📁 Project Structure
+
+/public             # Frontend (if served)
+/server.js          # Main Node.js server
+/Dockerfile         # Docker config
+/.github/workflows  # GitHub Actions CI/CD
