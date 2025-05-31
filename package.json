@@ -7,5 +7,7 @@
     "start": "node app.js",
     "test": "echo \"Tests passed\""
   },
-  "dependencies": {}
+  "dependencies": {
+    "docker": "^1.0.0"
+  }
 }
