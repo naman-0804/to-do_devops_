@@ -1,52 +1,34 @@
-name: React Todo CI/CD
+name: API Check
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  api-test:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Build Docker image
-      run: docker build -t react-todo-app .
-      
-    - name: Run container
-      run: docker run -d --network host --name todo-app react-todo-app
-      
-    - name: Wait for app to start
-      run: |
-        for i in {1..30}; do
-          if curl -s http://localhost:3000/ > /dev/null; then
-            echo "App is responding"
-            exit 0
-          fi
-          echo "Waiting for app to start... ($i/30)"
-          sleep 2
-        done
-        echo "App did not start in time"
-        exit 1
-      
-    - name: Check container logs
-      run: docker logs todo-app
-      
-    - name: Test API endpoints
-      run: |
-        echo "Testing root endpoint..."
-        curl -f http://localhost:3000/ || (echo "Root endpoint test failed" && exit 1)
-        
-        echo "Testing GET /api/todos..."
-        curl -f http://localhost:3000/api/todos || (echo "GET todos failed" && exit 1)
-        
-        echo "Testing POST /api/todos..."
-        curl -f -X POST http://localhost:3000/api/todos \
-          -H "Content-Type: application/json" \
-          -d '{"task": "Test from CI/CD"}' || (echo "POST todo failed" && exit 1)
-      
-    - name: Stop container
-      if: always()
-      run: docker stop todo-app || true
+      - uses: actions/checkout@v3
+
+      - name: Build image
+        run: docker build -t react-todo-app .
+
+      - name: Run container
+        run: docker run -d --network host --name todo-app react-todo-app
+
+      - name: Wait for app
+        run: sleep 10
+
+      - name: Test API endpoints
+        run: |
+          echo "Testing root endpoint..."
+          curl -f http://localhost:3000/ || (echo "Root endpoint test failed" && exit 1)
+          curl -f http://localhost:3000/api/todos
+          curl -f -X POST http://localhost:3000/api/todos \
+            -H "Content-Type: application/json" \
+            -d '{"task":"CI Test"}'
+
+      - name: Stop container
+        if: always()
+        run: docker stop todo-app || true
